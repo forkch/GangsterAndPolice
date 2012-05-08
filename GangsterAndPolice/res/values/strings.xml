@@ -3,5 +3,9 @@
 
     <string name="hello">Hello World, GangsterAndPoliceActivity!</string>
     <string name="app_name">GangsterAndPolice</string>
+    <string name="nameHint">Name</string>
+    <string name="policeLabel">Police</string>
+    <string name="gangsterLabel">Gangster</string>
+    <string name="registerButtonLabel">Register</string>
 
 </resources>

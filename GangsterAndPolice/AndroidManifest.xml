@@ -5,12 +5,16 @@
     android:versionName="1.0" >
 
     <uses-sdk android:minSdkVersion="15" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" >
+        android:label="@string/app_name" android:name="GPApplication">
         <activity
-            android:name=".GangsterAndPoliceActivity"
+            android:name=".GPLoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,6 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name="GPService" android:label="GPService"></service>
+       <activity android:name="GPMapActivity"></activity>
+       
+       <uses-library android:required="true" android:name="com.google.android.maps" />
     </application>
 
 </manifest>

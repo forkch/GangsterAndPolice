@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/nameText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/nameHint"
+        android:inputType="textPersonName" android:text="Rambo">
+
+        <requestFocus />
+    </EditText>
+
+    <RadioGroup
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/policeRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/policeLabel" android:checked="true"/>
+
+         <RadioButton
+             android:id="@+id/gangsterRadio"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="@string/gangsterLabel" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/registerButtonLabel"
+        android:onClick="onRegisterClick" android:visibility="invisible"/>
+
+</LinearLayout>
