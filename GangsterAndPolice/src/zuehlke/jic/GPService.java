@@ -9,7 +9,6 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,12 +25,14 @@ import android.util.Log;
 public class GPService extends Service implements IOCallback, LocationListener {
 
 	private static final String GP_WEBSERVICE_URL = "http://ec2-67-202-49-208.compute-1.amazonaws.com";
+//	 private static final String GP_WEBSERVICE_URL = "http://192.168.56.101";
 	private static final String TAG = "GPService";
 	private final IBinder mBinder = new GPBinder();
 	private List<GPServiceListener> listeners = new ArrayList<GPServiceListener>();
 	private SocketIO socket;
 
 	private String clientId;
+	private GPApplication application;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -51,6 +52,7 @@ public class GPService extends Service implements IOCallback, LocationListener {
 				onLocationChanged(lastKnownLocation);
 			}
 		}
+		application = ((GPApplication) getApplication());
 
 		return mBinder;
 	}
@@ -135,6 +137,8 @@ public class GPService extends Service implements IOCallback, LocationListener {
 
 			if (event.toLowerCase().equals("register")) {
 				clientId = json.getString("clientId");
+
+				application.setClientId(clientId);
 				for (GPServiceListener l : listeners) {
 					l.onRegistration(clientId);
 				}
@@ -144,7 +148,11 @@ public class GPService extends Service implements IOCallback, LocationListener {
 				Player p = new Player();
 
 				p.setClientId(json.getString("clientId"));
-				p.setName(json.getString("clientId")); // FIXME
+				if (json.has("name"))
+					p.setName(json.getString("name"));
+				else
+					p.setName(p.getClientId());
+				
 				if (json.getString("role").toLowerCase().equals("robber"))
 					p.setGangster(true);
 				else
@@ -154,8 +162,25 @@ public class GPService extends Service implements IOCallback, LocationListener {
 				p.setLng(json.getDouble("lng"));
 				p.setTimestamp(json.getString("time"));
 
+				if (!application.getPlayers().values().contains(p)
+						&& !p.getClientId().equals(application.getClientId())) {
+					application.getPlayers().put(p.getClientId(), p);
+					for (GPServiceListener l : listeners) {
+						l.onNewPlayer(p);
+					}
+				}
+
 				for (GPServiceListener l : listeners) {
 					l.onPositionUpdate(p);
+				}
+			} else if (event.toLowerCase().equals("message")) {
+				Log.d(TAG, "message received: " + json.toString());
+				
+				GPMessage msg = new GPMessage(json.getString("clientId"), json.getString("message"), json.getString("time"));
+				application.getMessages().add(msg);
+				
+				for (GPServiceListener l : listeners) {
+					l.onMessage(msg);
 				}
 			}
 		} catch (JSONException e) {

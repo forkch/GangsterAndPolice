@@ -3,9 +3,9 @@ package zuehlke.jic;
 public class Player {
 
 	
-	boolean isGangster;
-	String clientId;
-	String name;
+	private boolean isGangster;
+	private String clientId;
+	private String name;
 	public String getName() {
 		return name;
 	}

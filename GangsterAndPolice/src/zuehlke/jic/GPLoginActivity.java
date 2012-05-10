@@ -36,7 +36,7 @@ public class GPLoginActivity extends Activity implements GPServiceListener {
 
 	public void onRegisterClick(View view) {
 		String name = nameText.getText().toString();
-		String role = policeRadio.isSelected() ? "police" : "gangster";
+		String role = policeRadio.isChecked() ? "police" : "robber";
 		try {
 			mService.registerClient(name, role);
 		} catch (GPServiceException e) {
@@ -147,5 +147,17 @@ public class GPLoginActivity extends Activity implements GPServiceListener {
 				registerButton.setVisibility(Button.VISIBLE);
 			}
 		});
+	}
+
+	@Override
+	public void onNewPlayer(Player p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onMessage(GPMessage msg) {
+		// TODO Auto-generated method stub
+		
 	}
 }

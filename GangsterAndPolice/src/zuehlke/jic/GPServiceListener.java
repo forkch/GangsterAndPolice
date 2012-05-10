@@ -17,4 +17,8 @@ public interface GPServiceListener {
 
 	public void onArrestUnsuccessful();
 
+	public void onNewPlayer(Player p);
+
+	public void onMessage(GPMessage msg);
+
 }
