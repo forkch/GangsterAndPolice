@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -17,6 +19,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
+import com.google.android.maps.Projection;
 
 public class GPOverlay extends ItemizedOverlay<OverlayItem> implements
 		GPServiceListener {
@@ -29,9 +32,10 @@ public class GPOverlay extends ItemizedOverlay<OverlayItem> implements
 	private String myClientId;
 	private Context context;
 	private int markerHeight;
+	private int arrestRadiusInMeter;
 
 	public GPOverlay(Context context, Drawable marker, String myClientId,
-			boolean isGangster) {
+			boolean isGangster, int arrestRadiusInMeter) {
 		super(boundCenterBottom(marker));
 
 		this.context = context;
@@ -39,6 +43,8 @@ public class GPOverlay extends ItemizedOverlay<OverlayItem> implements
 		this.isGangster = isGangster;
 
 		this.markerHeight = ((BitmapDrawable) marker).getBitmap().getHeight();
+
+		this.arrestRadiusInMeter = arrestRadiusInMeter;
 
 		populate();
 	}
@@ -139,43 +145,79 @@ public class GPOverlay extends ItemizedOverlay<OverlayItem> implements
 
 		// go through all OverlayItems and draw title for each of them
 		for (Player p : players) {
-			/*
-			 * Converts latitude & longitude of this overlay item to coordinates
-			 * on screen. As we have called boundCenterBottom() in constructor,
-			 * so these coordinates will be of the bottom center position of the
-			 * displayed marker.
-			 */
-			GeoPoint point = createGeoPoint(p);
-			Point markerBottomCenterCoords = new Point();
-			mapView.getProjection().toPixels(point, markerBottomCenterCoords);
-
-			/* Find the width and height of the title */
-			TextPaint paintText = new TextPaint();
-			Paint paintRect = new Paint();
-
-			Rect rect = new Rect();
-			paintText.setTextSize(FONT_SIZE);
-			paintText.getTextBounds(p.getName(), 0, p.getName().length(), rect);
-
-			rect.inset(-TITLE_MARGIN, -TITLE_MARGIN);
-			rect.offsetTo(markerBottomCenterCoords.x - rect.width() / 2,
-					markerBottomCenterCoords.y - markerHeight - rect.height());
-
-			paintText.setTextAlign(Paint.Align.CENTER);
-			paintText.setTextSize(FONT_SIZE);
-			paintText.setARGB(255, 255, 255, 255);
-			paintRect.setARGB(130, 0, 0, 0);
-
-			canvas.drawRoundRect(new RectF(rect), 2, 2, paintRect);
-			canvas.drawText(p.getName(), rect.left + rect.width() / 2,
-					rect.bottom - TITLE_MARGIN, paintText);
+			createPlayerMarker(canvas, mapView, p);
+			if (p.isGangster()) {
+				createGangsterArrestCircle(canvas, mapView, p,
+						arrestRadiusInMeter);
+			}
 		}
+	}
+
+	private void createGangsterArrestCircle(Canvas canvas, MapView mapView,
+			Player p, int arrestRadiusInMeter) {
+		Projection projection = mapView.getProjection();
+
+		Point pt = new Point();
+
+		GeoPoint geo = new GeoPoint((int) (p.getLat() * 1e6),
+				(int) (p.getLng() * 1e6));
+
+		projection.toPixels(geo, pt);
+		float circleRadius = projection
+				.metersToEquatorPixels(arrestRadiusInMeter);
+
+		Paint innerCirclePaint;
+
+		innerCirclePaint = new Paint();
+		innerCirclePaint.setColor(Color.BLUE);
+		innerCirclePaint.setAlpha(25);
+		innerCirclePaint.setAntiAlias(true);
+
+		innerCirclePaint.setStyle(Paint.Style.FILL);
+
+		canvas.drawCircle((float) pt.x, (float) pt.y, circleRadius,
+				innerCirclePaint);
+
+	}
+
+	private void createPlayerMarker(android.graphics.Canvas canvas,
+			MapView mapView, Player p) {
+		/*
+		 * Converts latitude & longitude of this overlay item to coordinates on
+		 * screen. As we have called boundCenterBottom() in constructor, so
+		 * these coordinates will be of the bottom center position of the
+		 * displayed marker.
+		 */
+		GeoPoint point = createGeoPoint(p);
+		Point markerBottomCenterCoords = new Point();
+		mapView.getProjection().toPixels(point, markerBottomCenterCoords);
+
+		/* Find the width and height of the title */
+		TextPaint paintText = new TextPaint();
+		Paint paintRect = new Paint();
+
+		Rect rect = new Rect();
+		paintText.setTextSize(FONT_SIZE);
+		paintText.getTextBounds(p.getName(), 0, p.getName().length(), rect);
+
+		rect.inset(-TITLE_MARGIN, -TITLE_MARGIN);
+		rect.offsetTo(markerBottomCenterCoords.x - rect.width() / 2,
+				markerBottomCenterCoords.y - markerHeight - rect.height());
+
+		paintText.setTextAlign(Paint.Align.CENTER);
+		paintText.setTextSize(FONT_SIZE);
+		paintText.setARGB(255, 255, 255, 255);
+		paintRect.setARGB(130, 0, 0, 0);
+
+		canvas.drawRoundRect(new RectF(rect), 2, 2, paintRect);
+		canvas.drawText(p.getName(), rect.left + rect.width() / 2, rect.bottom
+				- TITLE_MARGIN, paintText);
 	}
 
 	@Override
 	public void onMessage(GPMessage msg) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

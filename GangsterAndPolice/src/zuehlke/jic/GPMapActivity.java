@@ -23,6 +23,8 @@ public class GPMapActivity extends MapActivity implements GPServiceListener, Loc
 	
 	private static final String TAG = "GPMapActivity";
 
+	private static final int ARREST_RADIUS = 100;
+
 	private MapView map;
 	private GPApplication application;
 	private MyLocationOverlay myLocationOverlay;
@@ -39,10 +41,10 @@ public class GPMapActivity extends MapActivity implements GPServiceListener, Loc
 		application.getService().registerGPServiceListener(this);
 
 		GPOverlay policeOverlay = new GPOverlay(this, this.getResources()
-				.getDrawable(R.drawable.cool), application.getClientId(), false);
+				.getDrawable(R.drawable.cool), application.getClientId(), false, ARREST_RADIUS);
 
 		GPOverlay gangsterOverlay = new GPOverlay(this, this.getResources()
-				.getDrawable(R.drawable.devil), application.getClientId(), true);
+				.getDrawable(R.drawable.devil), application.getClientId(), true, ARREST_RADIUS);
 
 		application.getService().registerGPServiceListener(policeOverlay);
 		application.getService().registerGPServiceListener(gangsterOverlay);
