@@ -3,13 +3,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/sendMessageField"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content" android:ems="10"/>
+
+        <Button
+            android:id="@+id/sendMessageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|center_horizontal"
+            android:onClick="sendMessage"
+            android:text="Send"
+            android:textSize="20sp" />
+    </LinearLayout>
 
     <com.google.android.maps.MapView
         android:id="@+id/map"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_weight="1"
         android:apiKey="0shDXse_FXBSdQWsZKSvV6ipbUpU74xIhdrRfnQ"
         android:clickable="true"
         android:enabled="true" />
+
+    <Button
+        android:id="@+id/arrestButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|center_horizontal"
+        android:onClick="sendArrest"
+        android:text="Arrest"
+        android:textSize="20sp" />
 
 </LinearLayout>

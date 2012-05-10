@@ -121,18 +121,6 @@ public class GPOverlay extends ItemizedOverlay<OverlayItem> implements
 	}
 
 	@Override
-	public void onArrestSuccessful() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onArrestUnsuccessful() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void onNewPlayer(Player p) {
 		// TODO Auto-generated method stub
 
@@ -169,7 +157,11 @@ public class GPOverlay extends ItemizedOverlay<OverlayItem> implements
 		Paint innerCirclePaint;
 
 		innerCirclePaint = new Paint();
-		innerCirclePaint.setColor(Color.BLUE);
+		if (p.isArrestable()) {
+			innerCirclePaint.setColor(Color.RED);
+		} else {
+			innerCirclePaint.setColor(Color.BLUE);
+		}
 		innerCirclePaint.setAlpha(25);
 		innerCirclePaint.setAntiAlias(true);
 
@@ -218,6 +210,18 @@ public class GPOverlay extends ItemizedOverlay<OverlayItem> implements
 	public void onMessage(GPMessage msg) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onArrestablePlayer(Player arrestablePlayer) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onNoArrestablePlayer() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

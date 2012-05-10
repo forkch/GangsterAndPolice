@@ -1,8 +1,7 @@
 package zuehlke.jic;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
 import android.app.Application;
@@ -10,17 +9,35 @@ import android.app.Application;
 public class GPApplication extends Application {
 
 	private String clientId;
+	private double lat;
+	private double lng;
 
-	private Map<String, Player> players = new HashMap<String,Player>();
-	
-	private List<GPMessage> messages = new ArrayList<GPMessage>();
+	public double getLat() {
+		return lat;
+	}
 
-	public Map<String,Player> getPlayers() {
+	public void setLat(double lat) {
+		this.lat = lat;
+	}
+
+	public double getLng() {
+		return lng;
+	}
+
+	public void setLng(double lng) {
+		this.lng = lng;
+	}
+
+	private Map<String, Player> players = new HashMap<String, Player>();
+
+	private LinkedList<GPMessage> messages = new LinkedList<GPMessage>();
+
+	public Map<String, Player> getPlayers() {
 		return players;
 
 	}
-	
-	public List<GPMessage> getMessages() {
+
+	public LinkedList<GPMessage> getMessages() {
 		return messages;
 	}
 
@@ -36,7 +53,6 @@ public class GPApplication extends Application {
 
 	@Override
 	public void onCreate() {
-		// TODO Auto-generated method stub
 		super.onCreate();
 	}
 

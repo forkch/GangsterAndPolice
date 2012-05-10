@@ -15,7 +15,7 @@ public final class GPServiceUtility {
 	public static void registerLocationManager(LocationManager locationManager,
 			LocationListener locationListener) {
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				1000, 0, locationListener);
+				1000, 3, locationListener);
 
 		locationManager.requestLocationUpdates(
 				LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
@@ -35,5 +35,12 @@ public final class GPServiceUtility {
 	public static GeoPoint toGeoPoint(Location location) {
 		return new GeoPoint(((int) (location.getLatitude() * 1e6)),
 				(int) (location.getLongitude() * 1e6));
+	}
+
+	public static Location toLocation(double lat, double lng) {
+		Location loc = new Location(LocationManager.GPS_PROVIDER);
+		loc.setLatitude(lat);
+		loc.setLongitude(lng);
+		return loc ;
 	}
 }

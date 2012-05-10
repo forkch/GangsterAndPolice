@@ -126,18 +126,6 @@ public class GPLoginActivity extends Activity implements GPServiceListener {
 	}
 
 	@Override
-	public void onArrestSuccessful() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onArrestUnsuccessful() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void onConnectionEstablished() {
 		final Button registerButton = (Button) findViewById(R.id.registerButton);
 		registerButton.post(new Runnable() {
@@ -157,6 +145,18 @@ public class GPLoginActivity extends Activity implements GPServiceListener {
 
 	@Override
 	public void onMessage(GPMessage msg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onArrestablePlayer(Player arrestablePlayer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onNoArrestablePlayer() {
 		// TODO Auto-generated method stub
 		
 	}

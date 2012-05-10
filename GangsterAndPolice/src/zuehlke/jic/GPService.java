@@ -1,15 +1,19 @@
 package zuehlke.jic;
 
 import static zuehlke.jic.GPServiceUtility.registerLocationManager;
+import static zuehlke.jic.GPServiceUtility.toLocation;
 import io.socket.IOAcknowledge;
 import io.socket.IOCallback;
 import io.socket.SocketIO;
 import io.socket.SocketIOException;
 
 import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,23 +30,22 @@ import android.util.Log;
 public class GPService extends Service implements IOCallback, LocationListener {
 
 	private static final String GP_WEBSERVICE_URL = "http://ec2-67-202-49-208.compute-1.amazonaws.com";
-//	 private static final String GP_WEBSERVICE_URL = "http://192.168.56.101";
+	// private static final String GP_WEBSERVICE_URL = "http://192.168.56.101";
 	private static final String TAG = "GPService";
 	private final IBinder mBinder = new GPBinder();
 	private List<GPServiceListener> listeners = new ArrayList<GPServiceListener>();
 	private SocketIO socket;
 
-	private String clientId;
-	private GPApplication application;
-
 	@Override
 	public IBinder onBind(Intent arg0) {
 		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		registerLocationManager(locationManager, this);
-		
-		application = ((GPApplication) getApplication());
 
 		return mBinder;
+	}
+
+	public GPApplication getGPApplication() {
+		return ((GPApplication) getApplication());
 	}
 
 	/**
@@ -87,6 +90,36 @@ public class GPService extends Service implements IOCallback, LocationListener {
 		}
 	}
 
+	public void arrest() {
+		JSONObject arrestObj = new JSONObject();
+		try {
+			arrestObj.put("clientId", getGPApplication().getClientId());
+			arrestObj.put("lat", getGPApplication().getLat());
+			arrestObj.put("lng", getGPApplication().getLng());
+
+			socket.emit("arrest", arrestObj);
+
+		} catch (JSONException e) {
+			Log.wtf(TAG, e);
+		}
+	}
+
+	public void sendMessage(String string) {
+		JSONObject arrestObj = new JSONObject();
+		try {
+			arrestObj.put("clientId", getGPApplication().getClientId());
+			arrestObj.put("message",string);
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+			
+			arrestObj.put("time", format.format(new Date(System.currentTimeMillis())));
+
+			socket.emit("message", arrestObj);
+
+		} catch (JSONException e) {
+			Log.wtf(TAG, e);
+		}
+	}
+
 	public void registerGPServiceListener(GPServiceListener listener) {
 		this.listeners.add(listener);
 	}
@@ -123,36 +156,33 @@ public class GPService extends Service implements IOCallback, LocationListener {
 		try {
 			JSONObject json = (JSONObject) args[0];
 
+			String clientId = json.getString("clientId");
 			if (event.toLowerCase().equals("register")) {
-				clientId = json.getString("clientId");
 
-				application.setClientId(clientId);
+				getGPApplication().setClientId(clientId);
 				for (GPServiceListener l : listeners) {
 					l.onRegistration(clientId);
 				}
 			} else if (event.toLowerCase().equals("position")) {
 				Log.d(TAG, "position msg recieved: " + json.toString());
+				if (getGPApplication().getClientId().equals(clientId)) {
+					return;
+				}
 
-				Player p = new Player();
+				Player p = getGPApplication().getPlayers().get(clientId);
+				if (p == null) {
+					p = initPlayer(json, json.getString("clientId"));
 
-				p.setClientId(json.getString("clientId"));
-				if (json.has("name"))
-					p.setName(json.getString("name"));
-				else
-					p.setName(p.getClientId());
-				
-				if (json.getString("role").toLowerCase().equals("robber"))
-					p.setGangster(true);
-				else
-					p.setGangster(false);
-
+				}
 				p.setLat(json.getDouble("lat"));
 				p.setLng(json.getDouble("lng"));
+				p.addLocation(toLocation(p.getLat(), p.getLng()));
 				p.setTimestamp(json.getString("time"));
 
-				if (!application.getPlayers().values().contains(p)
-						&& !p.getClientId().equals(application.getClientId())) {
-					application.getPlayers().put(p.getClientId(), p);
+				if (!getGPApplication().getPlayers().values().contains(p)
+						&& !p.getClientId().equals(
+								getGPApplication().getClientId())) {
+					getGPApplication().getPlayers().put(p.getClientId(), p);
 					for (GPServiceListener l : listeners) {
 						l.onNewPlayer(p);
 					}
@@ -161,12 +191,48 @@ public class GPService extends Service implements IOCallback, LocationListener {
 				for (GPServiceListener l : listeners) {
 					l.onPositionUpdate(p);
 				}
+			} else if (event.toLowerCase().equals("arrest")) {
+				Log.d(TAG, "arrest msg recieved: " + json.toString());
+				
+				JSONArray arrestables = json.getJSONArray("arrestables");
+				for (int i = 0; i < arrestables.length(); i++) {
+					JSONObject arrestable = arrestables.getJSONObject(i);
+					
+					String arrestableId = arrestable.getString("clientId");
+					
+					Player arrestablePlayer = getGPApplication().getPlayers().get(arrestableId);
+					arrestablePlayer.setArrestable(true);
+					for (GPServiceListener l : listeners) {
+						l.onArrestablePlayer(arrestablePlayer);
+					}
+					
+					
+				}
+			} else if (event.toLowerCase().equals("arrest-timeout")) {
+				Log.d(TAG, "arrest-timeout msg recieved: " + json.toString());
+				
+				JSONArray arrestables = json.getJSONArray("arrestables");
+				for (int i = 0; i < arrestables.length(); i++) {
+					JSONObject arrestable = arrestables.getJSONObject(i);
+					
+					String arrestableId = arrestable.getString("clientId");
+					
+					Player arrestablePlayer = getGPApplication().getPlayers().get(arrestableId);
+					arrestablePlayer.setArrestable(false);
+					for (GPServiceListener l : listeners) {
+						l.onNoArrestablePlayer();
+					}
+					
+					
+				}
+				
 			} else if (event.toLowerCase().equals("message")) {
 				Log.d(TAG, "message received: " + json.toString());
-				
-				GPMessage msg = new GPMessage(json.getString("clientId"), json.getString("message"), json.getString("time"));
-				application.getMessages().add(msg);
-				
+
+				GPMessage msg = new GPMessage(json.getString("clientId"),
+						json.getString("message"), json.getString("time"));
+				getGPApplication().getMessages().addFirst(msg);
+
 				for (GPServiceListener l : listeners) {
 					l.onMessage(msg);
 				}
@@ -174,6 +240,23 @@ public class GPService extends Service implements IOCallback, LocationListener {
 		} catch (JSONException e) {
 			Log.wtf(TAG, e);
 		}
+	}
+
+	private Player initPlayer(JSONObject json, String aClientId)
+			throws JSONException {
+		Player p;
+		p = new Player();
+		p.setClientId(aClientId);
+		if (json.has("name"))
+			p.setName(json.getString("name"));
+		else
+			p.setName(p.getClientId());
+
+		if (json.getString("role").toLowerCase().equals("robber"))
+			p.setGangster(true);
+		else
+			p.setGangster(false);
+		return p;
 	}
 
 	@Override
@@ -190,6 +273,7 @@ public class GPService extends Service implements IOCallback, LocationListener {
 		Log.d(TAG, "location changed: lat=" + location.getLatitude() + ", lng="
 				+ location.getLongitude());
 
+		String clientId = getGPApplication().getClientId();
 		if (socket == null || clientId == null) {
 			return;
 		}
@@ -197,6 +281,8 @@ public class GPService extends Service implements IOCallback, LocationListener {
 		JSONObject positionMessage = new JSONObject();
 
 		try {
+			getGPApplication().setLat(location.getLatitude());
+			getGPApplication().setLng(location.getLongitude());
 			positionMessage.put("clientId", clientId);
 			positionMessage.put("lat", location.getLatitude());
 			positionMessage.put("lng", location.getLongitude());
@@ -218,4 +304,5 @@ public class GPService extends Service implements IOCallback, LocationListener {
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 	}
+
 }

@@ -7,5 +7,6 @@
     <string name="policeLabel">Police</string>
     <string name="gangsterLabel">Gangster</string>
     <string name="registerButtonLabel">Register</string>
+    <string name="showMessages">Show Messages</string>
 
 </resources>

@@ -13,12 +13,12 @@ public interface GPServiceListener {
 
 	public void onMessageReceived(String message);
 
-	public void onArrestSuccessful();
-
-	public void onArrestUnsuccessful();
-
 	public void onNewPlayer(Player p);
 
 	public void onMessage(GPMessage msg);
+
+	public void onArrestablePlayer(Player arrestablePlayer);
+
+	public void onNoArrestablePlayer();
 
 }
