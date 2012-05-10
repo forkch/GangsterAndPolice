@@ -1,5 +1,6 @@
 package zuehlke.jic;
 
+import static zuehlke.jic.GPServiceUtility.registerLocationManager;
 import io.socket.IOAcknowledge;
 import io.socket.IOCallback;
 import io.socket.SocketIO;
@@ -37,21 +38,8 @@ public class GPService extends Service implements IOCallback, LocationListener {
 	@Override
 	public IBinder onBind(Intent arg0) {
 		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-				1000, 0, this);
-		locationManager.requestLocationUpdates(
-				LocationManager.NETWORK_PROVIDER, 1000, 0, this);
-		Location lastKnownLocation = locationManager
-				.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		if (lastKnownLocation != null) {
-			onLocationChanged(lastKnownLocation);
-		} else {
-			lastKnownLocation = locationManager
-					.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-			if (lastKnownLocation != null) {
-				onLocationChanged(lastKnownLocation);
-			}
-		}
+		registerLocationManager(locationManager, this);
+		
 		application = ((GPApplication) getApplication());
 
 		return mBinder;

@@ -1,18 +1,27 @@
 package zuehlke.jic;
 
+import static zuehlke.jic.GPServiceUtility.registerLocationManager;
+
 import java.util.List;
 
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 
-public class GPMapActivity extends MapActivity implements GPServiceListener {
+public class GPMapActivity extends MapActivity implements GPServiceListener, LocationListener {
+	
+	private static final String TAG = "GPMapActivity";
 
 	private MapView map;
 	private GPApplication application;
@@ -38,8 +47,7 @@ public class GPMapActivity extends MapActivity implements GPServiceListener {
 		application.getService().registerGPServiceListener(policeOverlay);
 		application.getService().registerGPServiceListener(gangsterOverlay);
 
-		// map.getController().zoomToSpan(overlay.getLatSpanE6(),
-		// overlay.getLonSpanE6());
+		map.getController().setZoom(16);
 
 		List<Overlay> overlays = map.getOverlays();
 		myLocationOverlay = new MyLocationOverlay(this, map);
@@ -47,6 +55,7 @@ public class GPMapActivity extends MapActivity implements GPServiceListener {
 		overlays.add(gangsterOverlay);
 		overlays.add(policeOverlay);
 		overlays.add(myLocationOverlay);
+		
 		map.invalidate();
 		handler = new Handler(Looper.getMainLooper());
 	}
@@ -65,6 +74,11 @@ public class GPMapActivity extends MapActivity implements GPServiceListener {
 		super.onResume();
 		myLocationOverlay.enableCompass();
 		myLocationOverlay.enableMyLocation();
+		
+		// location service
+		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		registerLocationManager(locationManager, this);
+		
 	}
 
 	@Override
@@ -138,6 +152,32 @@ public class GPMapActivity extends MapActivity implements GPServiceListener {
 		if (player != null) {
 			toastMsg(player.getName() + ": " + msg.getMessage());
 		}
+		
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		if(map != null) {
+			Log.d(TAG, "Center to my position");
+			map.getController().animateTo(GPServiceUtility.toGeoPoint(location));
+		}
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
 		
 	}
 
