@@ -8,10 +8,12 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.opengl.Visibility;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -21,6 +23,8 @@ public class GPLoginActivity extends Activity implements GPServiceListener {
 	private EditText nameText;
 	private RadioButton policeRadio;
 	private RadioButton gangsterRadio;
+	private Handler handler;
+	private GPApplication application;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -32,10 +36,16 @@ public class GPLoginActivity extends Activity implements GPServiceListener {
 		gangsterRadio = (RadioButton) findViewById(R.id.gangsterRadio);
 
 		application = (GPApplication) getApplication();
+		handler = new Handler(getMainLooper());
 	}
 
 	public void onRegisterClick(View view) {
+
 		String name = nameText.getText().toString();
+		if (name.isEmpty() || name == null) {
+			toastMsg("Please enter a name");
+			return;
+		}
 		String role = policeRadio.isChecked() ? "police" : "robber";
 		try {
 			mService.registerClient(name, role);
@@ -87,7 +97,16 @@ public class GPLoginActivity extends Activity implements GPServiceListener {
 			mBound = false;
 		}
 	};
-	private GPApplication application;
+
+	private void toastMsg(final String msg) {
+		handler.post(new Runnable() {
+
+			public void run() {
+				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
+						.show();
+			}
+		});
+	}
 
 	@Override
 	public void onRegistration(final String clientId) {
@@ -107,7 +126,7 @@ public class GPLoginActivity extends Activity implements GPServiceListener {
 
 			@Override
 			public void run() {
-				nameText.append("Connection failed: ");
+				toastMsg("Connection failed");
 
 			}
 		});
@@ -132,7 +151,13 @@ public class GPLoginActivity extends Activity implements GPServiceListener {
 
 			@Override
 			public void run() {
+				nameText.setVisibility(EditText.VISIBLE);
+				policeRadio.setVisibility(RadioButton.VISIBLE);
+				gangsterRadio.setVisibility(RadioButton.VISIBLE);
 				registerButton.setVisibility(Button.VISIBLE);
+
+				findViewById(R.id.loadingProgressBar).setVisibility(
+						ProgressBar.INVISIBLE);
 			}
 		});
 	}
@@ -140,23 +165,47 @@ public class GPLoginActivity extends Activity implements GPServiceListener {
 	@Override
 	public void onNewPlayer(Player p) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onMessage(GPMessage msg) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onArrestablePlayer(Player arrestablePlayer) {
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onNoArrestablePlayerLeft() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onHit(Player player) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onAllRobbersArrested(String string) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onGameOver() {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onNoArrestablePlayer() {
+	public void onWeAreBeingArrested() {
 		// TODO Auto-generated method stub
 		
 	}

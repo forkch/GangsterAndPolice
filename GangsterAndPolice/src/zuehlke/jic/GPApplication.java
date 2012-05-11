@@ -12,6 +12,12 @@ public class GPApplication extends Application {
 	private double lat;
 	private double lng;
 
+	private Map<String, Player> players = new HashMap<String, Player>();
+
+	private LinkedList<GPMessage> messages = new LinkedList<GPMessage>();
+
+	private GPService service;
+
 	public double getLat() {
 		return lat;
 	}
@@ -27,10 +33,6 @@ public class GPApplication extends Application {
 	public void setLng(double lng) {
 		this.lng = lng;
 	}
-
-	private Map<String, Player> players = new HashMap<String, Player>();
-
-	private LinkedList<GPMessage> messages = new LinkedList<GPMessage>();
 
 	public Map<String, Player> getPlayers() {
 		return players;
@@ -49,8 +51,6 @@ public class GPApplication extends Application {
 		this.clientId = clientId;
 	}
 
-	private GPService service;
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -62,6 +62,14 @@ public class GPApplication extends Application {
 
 	public void setService(GPService service) {
 		this.service = service;
+	}
+
+	public void reset() {
+		players.clear();
+		clientId = "";
+		lat = Double.NEGATIVE_INFINITY;
+		lng = Double.NEGATIVE_INFINITY;
+		messages.clear();
 	}
 
 }

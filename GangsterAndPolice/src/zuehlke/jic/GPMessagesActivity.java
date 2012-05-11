@@ -3,6 +3,7 @@ package zuehlke.jic;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -63,9 +64,9 @@ public class GPMessagesActivity extends Activity implements GPServiceListener {
 
 	protected CharSequence createMessageString(GPMessage message) {
 		if (message.getClientId().equals(application.getClientId())) {
-			
-			return "Me: " + message.getMessage() + " ("
-					+ message.getTime() + ")";
+
+			return "Me: " + message.getMessage() + " (" + message.getTime()
+					+ ")";
 		} else {
 			Player player = application.getPlayers().get(message.getClientId());
 
@@ -128,7 +129,40 @@ public class GPMessagesActivity extends Activity implements GPServiceListener {
 	}
 
 	@Override
-	public void onNoArrestablePlayer() {
+	public void onNoArrestablePlayerLeft() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onHit(Player player) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onAllRobbersArrested(String string) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onGameOver() {
+		handler.post(new Runnable() {
+
+			@Override
+			public void run() {
+
+				Intent backToLogin = new Intent(GPMessagesActivity.this,
+						GPLoginActivity.class);
+				startActivity(backToLogin);
+
+			}
+		});
+	}
+
+	@Override
+	public void onWeAreBeingArrested() {
 		// TODO Auto-generated method stub
 		
 	}

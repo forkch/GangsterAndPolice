@@ -219,7 +219,43 @@ public class GPOverlay extends ItemizedOverlay<OverlayItem> implements
 	}
 
 	@Override
-	public void onNoArrestablePlayer() {
+	public void onNoArrestablePlayerLeft() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onHit(final Player player) {
+
+		new Handler(context.getMainLooper()).post(new Runnable() {
+
+			@Override
+			public void run() {
+
+				int index = players.indexOf(player);
+				if (index >= 0)
+					players.remove(index);
+
+				setLastFocusedIndex(-1);
+				populate();
+			}
+		});
+	}
+
+	@Override
+	public void onAllRobbersArrested(String string) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onGameOver() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onWeAreBeingArrested() {
 		// TODO Auto-generated method stub
 		
 	}

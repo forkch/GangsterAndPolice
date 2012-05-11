@@ -19,6 +19,14 @@ public interface GPServiceListener {
 
 	public void onArrestablePlayer(Player arrestablePlayer);
 
-	public void onNoArrestablePlayer();
+	public void onNoArrestablePlayerLeft();
+
+	public void onHit(Player player);
+
+	public void onAllRobbersArrested(String string);
+
+	public void onGameOver();
+
+	public void onWeAreBeingArrested();
 
 }

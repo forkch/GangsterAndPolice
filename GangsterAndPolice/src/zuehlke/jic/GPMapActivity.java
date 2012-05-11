@@ -13,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -58,6 +59,8 @@ public class GPMapActivity extends MapActivity implements GPServiceListener,
 		map.setBuiltInZoomControls(true);
 		application = (GPApplication) getApplication();
 		application.getService().registerGPServiceListener(this);
+		
+		
 
 		GPOverlay policeOverlay = new GPOverlay(this, this.getResources()
 				.getDrawable(R.drawable.cool), application.getClientId(),
@@ -81,7 +84,7 @@ public class GPMapActivity extends MapActivity implements GPServiceListener,
 
 		map.invalidate();
 		handler = new Handler(Looper.getMainLooper());
-		ambianceMediaPlayer = MediaPlayer.create(this, R.raw.ambience);
+		ambianceMediaPlayer = MediaPlayer.create(this, R.raw.ambience_louder);
 		ambianceMediaPlayer.setLooping(true);
 		ambianceMediaPlayer.setVolume(1.f, 1.f);
 		currentMediaPlayer = ambianceMediaPlayer;
@@ -103,6 +106,7 @@ public class GPMapActivity extends MapActivity implements GPServiceListener,
 
 		currentMediaPlayer.start();
 
+
 	}
 
 	@Override
@@ -114,8 +118,6 @@ public class GPMapActivity extends MapActivity implements GPServiceListener,
 		currentMediaPlayer.pause();
 
 	}
-	
-	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,8 +125,6 @@ public class GPMapActivity extends MapActivity implements GPServiceListener,
 		menuInflater.inflate(R.menu.menu, menu);
 		return true;
 	}
-	
-	
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -176,6 +176,15 @@ public class GPMapActivity extends MapActivity implements GPServiceListener,
 			public void run() {
 				drawPathForPlayer(p.getLastLocations(),
 						Color.parseColor("red"), map);
+
+				if (p.isGangster()
+						&& !p.getClientId().equals(application.getClientId())) {
+
+					MediaPlayer mediaPlayer = MediaPlayer.create(
+							GPMapActivity.this, R.raw.mariojump);
+					mediaPlayer.start();
+
+				}
 
 			}
 		});
@@ -310,7 +319,7 @@ public class GPMapActivity extends MapActivity implements GPServiceListener,
 
 	@Override
 	public void onArrestablePlayer(Player arrestablePlayer) {
-		ambianceMediaPlayer.stop();
+		ambianceMediaPlayer.pause();
 		if (!sirenMediaPlayer.isPlaying()) {
 			sirenMediaPlayer.start();
 		}
@@ -318,11 +327,81 @@ public class GPMapActivity extends MapActivity implements GPServiceListener,
 	}
 
 	@Override
-	public void onNoArrestablePlayer() {
-		sirenMediaPlayer.stop();
+	public void onNoArrestablePlayerLeft() {
+		sirenMediaPlayer.pause();
 		if (!ambianceMediaPlayer.isPlaying()) {
 			ambianceMediaPlayer.start();
 		}
 		currentMediaPlayer = ambianceMediaPlayer;
+	}
+
+	@Override
+	public void onHit(Player player) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onAllRobbersArrested(final String string) {
+		handler.post(new Runnable() {
+
+			@Override
+			public void run() {
+
+				currentMediaPlayer.stop();
+				MediaPlayer mediaPlayer = MediaPlayer.create(
+						GPMapActivity.this, R.raw.defeat);
+				toastMsg(string);
+				mediaPlayer.start();
+				mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+					@Override
+					public void onCompletion(MediaPlayer mp) {
+						Intent backToLogin = new Intent(GPMapActivity.this,
+								GPLoginActivity.class);
+						startActivity(backToLogin);
+
+					}
+				});
+
+			}
+		});
+	}
+
+	@Override
+	public void onGameOver() {
+		handler.post(new Runnable() {
+
+			@Override
+			public void run() {
+
+				currentMediaPlayer.stop();
+				MediaPlayer mediaPlayer = MediaPlayer.create(
+						GPMapActivity.this, R.raw.gameover);
+				toastMsg("GAME OVER");
+				mediaPlayer.start();
+				mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+					@Override
+					public void onCompletion(MediaPlayer mp) {
+						Intent backToLogin = new Intent(GPMapActivity.this,
+								GPLoginActivity.class);
+						startActivity(backToLogin);
+
+					}
+				});
+
+			}
+		});
+	}
+
+	@Override
+	public void onWeAreBeingArrested() {
+		ambianceMediaPlayer.pause();
+		if (!sirenMediaPlayer.isPlaying()) {
+			sirenMediaPlayer.start();
+		}
+		currentMediaPlayer = sirenMediaPlayer;
+		toastMsg("ATTENTION POLICE NEARBY");
 	}
 }

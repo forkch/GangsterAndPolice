@@ -10,28 +10,32 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/nameHint"
-        android:inputType="textPersonName">
+        android:inputType="textPersonName" android:visibility="invisible">
 
         <requestFocus />
     </EditText>
-
+
     <RadioGroup
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
-
+
         <RadioButton
             android:id="@+id/policeRadio"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/policeLabel" android:checked="true"/>
-
-         <RadioButton
-             android:id="@+id/gangsterRadio"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:text="@string/gangsterLabel" />
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="@string/policeLabel"
+            android:visibility="invisible" />
 
+        <RadioButton
+            android:id="@+id/gangsterRadio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/gangsterLabel"
+            android:visibility="invisible" />
     </RadioGroup>
 
     <Button
@@ -40,5 +44,11 @@
         android:layout_height="wrap_content"
         android:text="@string/registerButtonLabel"
         android:onClick="onRegisterClick" android:visibility="invisible"/>
+
+    <ProgressBar
+        android:id="@+id/loadingProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:indeterminateBehavior="cycle"/>
 
 </LinearLayout>
