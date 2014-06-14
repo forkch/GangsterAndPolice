@@ -1,0 +1,83 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+a {
+  color: #00B7FF;
+}
+#map {
+  margin: 24px 0px;
+  width: 380px;
+  height: 360px;
+  background-color: red;
+}
+#status {
+  background-color: #ededed;
+  border-radius: 8px;
+  float: right;
+  margin: 24px 24px;
+  width: 420px;
+}
+#status .policeman {
+  padding: 4px;
+  background-color: #ccc;
+}
+#status .robber {
+  padding: 4px;
+  background-color: #333;
+  color: #fff;
+}
+#status .message {
+  padding: 4px;
+  margin-left: 4px;
+}
+#input {
+  margin-bottom: 18px;
+}
+#message {
+  border: 2px solid #999;
+  box-shadow: inset -3px -3px 14px #cccccc;
+  border-radius: 8px;
+  padding: 4px;
+  margin-left: 6px;
+  margin-top: 12px;
+  width: 360px;
+  font-size: 18px;
+}
+button {
+  box-shadow: 3px 3px 4px #333;
+  border: 1px solid #999;
+  border-radius: 16px;
+  display: block;
+  font-size: 18px;
+  width: 380px;
+  margin-top: 8px;
+}
+button:active {
+  border: 1px solid #333;
+  box-shadow: 3px 3px 12px #999;
+  background-color: #999;
+  color: white;
+}
+#scroll-container {
+  /*height: 290px;*/
+
+  overflow: auto;
+  width: 400px;
+}
+#messages {
+  width: 380px;
+}
+#messages > div {
+  border: 2px solid #777;
+  border-radius: 6px;
+  box-shadow: 3px 3px 8px #999;
+  margin-bottom: 14px;
+  padding: 8px;
+}
+#messages > div > label {
+  display: block;
+}
+#messages > div > div {
+  font-size: 18px;
+}

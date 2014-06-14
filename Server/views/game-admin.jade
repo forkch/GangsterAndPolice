@@ -1,0 +1,40 @@
+#admin-map
+#client-list
+	#policemen
+	#robbers
+	#arrestables
+#admin-messages
+
+block scripts
+	link(rel="stylesheet", type="text/css", href="/stylesheets/admin.css")
+	script#client-list-tmpl(type="text/mustache")
+		.info 
+			span.tag.police Polizisten: {{policemen.length}}
+			span.tag.robber Räuber: {{robbers.length}} 
+			span.tag.admin Admins: {{admins.length}}
+		|{{#policemen}}
+		.policeman(id="client-{{clientId}}", data-id="{{clientId}}", data-action="select-client")
+			.header
+				.geo-location
+					span.lat {{lat}}/
+					span.lng {{lng}}
+				span.name {{name}} ({{clientId}})
+		|{{/policemen}}		
+		|{{#robbers}}
+		.robber(id="client-{{clientId}}", data-id="{{clientId}}", data-action="select-client")
+			.header
+				.geo-location
+					span.lat {{lat}}/
+					span.lng {{lng}}
+				span.name {{name}} ({{clientId}})
+		|{{/robbers}}
+	script#message-tmpl(type="text/mustache")
+		|{{#messages}}
+		.message
+			span.sender {{name}}
+			span.text {{message}}
+		|{{/messages}}
+	script(src="/javascripts/common/template-controller.js")
+	script(src="/javascripts/admin/message-dispatcher.js")
+	script(src="/javascripts/admin/map-controller.js")
+	script(src="/javascripts/admin/bootstrap.js")

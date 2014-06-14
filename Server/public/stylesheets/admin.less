@@ -1,0 +1,105 @@
+@robber: #dd2222;
+@police: #009900;
+@admin: #999;
+
+.panel() {
+	background-color: #ededed;
+	border-radius: 8px;
+	float: right;
+	margin: 0px 0px;
+	width: 420px;
+}
+body {
+	padding: 24px;
+}
+.tagged() {
+	border-radius: 3px;
+	font-size: 0.8em;
+	padding: 2px 6px;
+	background-color: #666;
+	color: #fff;
+	display: inline-block;
+}
+
+.geo-location {
+	display: inline-block;
+	.tagged();
+}
+
+.message {
+	padding: 12px 6px 2px 6px;
+	.sender {
+		.tagged();
+		margin-right: 8px;
+	}
+}
+
+#admin-map {
+	border-radius: 12px;
+	margin: 0px 0px;
+	width: 874px;
+	height: 720px;
+	background-color: red;
+	float: left;
+}
+
+#admin-messages {
+	.panel();
+	height: 440px;
+	margin-top: 24px;
+	overflow: auto;
+}
+
+#client-list {
+	.panel();
+	padding-top: 6px;
+	padding-bottom: 12px;
+	overflow-y: auto;
+	.info {
+		margin-left: 6px;
+		margin-right: 6px;
+	 	padding: 2px;
+		.tag {
+			.tagged();
+			margin-right: 4px;
+			margin-bottom: 4px;
+			margin-top: 2px;
+		}
+		.robber {
+			background-color: @robber;
+		}
+		.police {
+			background-color: @police;
+		}
+	}
+	.selected > div {
+		background-color: #999;
+	}
+	.header {
+		background-color: #bbb;
+		border-radius: 4px;
+		color: white;
+		cursor: pointer;
+		font-size: 12px;
+		position: relative;
+		padding: 4px 12px;
+		margin-bottom: 6px;
+		margin-left: 6px;
+		margin-right: 6px;
+		.geo-location {
+			background-color: @police;
+			font-size: 10px;
+			margin-top: 4px;
+		}
+		.name {
+			display: block;
+			margin-top: 4px;
+		}
+	}
+	.robber {
+		.header .geo-location {
+			background-color: @robber;
+		}
+	}
+	height: 240px;
+}

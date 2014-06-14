@@ -1,0 +1,102 @@
+body {
+  padding: 24px;
+}
+.geo-location {
+  display: inline-block;
+  border-radius: 3px;
+  font-size: 0.8em;
+  padding: 2px 6px;
+  background-color: #666;
+  color: #fff;
+  display: inline-block;
+}
+.message {
+  padding: 12px 6px 2px 6px;
+}
+.message .sender {
+  border-radius: 3px;
+  font-size: 0.8em;
+  padding: 2px 6px;
+  background-color: #666;
+  color: #fff;
+  display: inline-block;
+  margin-right: 8px;
+}
+#admin-map {
+  border-radius: 12px;
+  margin: 0px 0px;
+  width: 874px;
+  height: 720px;
+  background-color: red;
+  float: left;
+}
+#admin-messages {
+  background-color: #ededed;
+  border-radius: 8px;
+  float: right;
+  margin: 0px 0px;
+  width: 420px;
+  height: 440px;
+  margin-top: 24px;
+  overflow: auto;
+}
+#client-list {
+  background-color: #ededed;
+  border-radius: 8px;
+  float: right;
+  margin: 0px 0px;
+  width: 420px;
+  padding-top: 6px;
+  padding-bottom: 12px;
+  overflow-y: auto;
+  height: 240px;
+}
+#client-list .info {
+  margin-left: 6px;
+  margin-right: 6px;
+  padding: 2px;
+}
+#client-list .info .tag {
+  border-radius: 3px;
+  font-size: 0.8em;
+  padding: 2px 6px;
+  background-color: #666;
+  color: #fff;
+  display: inline-block;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  margin-top: 2px;
+}
+#client-list .info .robber {
+  background-color: #dd2222;
+}
+#client-list .info .police {
+  background-color: #009900;
+}
+#client-list .selected > div {
+  background-color: #999;
+}
+#client-list .header {
+  background-color: #bbb;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  position: relative;
+  padding: 4px 12px;
+  margin-bottom: 6px;
+  margin-left: 6px;
+  margin-right: 6px;
+}
+#client-list .header .geo-location {
+  background-color: #009900;
+  font-size: 10px;
+  margin-top: 4px;
+}
+#client-list .header .name {
+  display: block;
+  margin-top: 4px;
+}
+#client-list .robber .header .geo-location {
+  background-color: #dd2222;
+}
